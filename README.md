@@ -17,7 +17,7 @@
 [Docs-rs]: https://docs.rs/decolor/
 [Docs]: https://img.shields.io/docsrs/decolor.svg?color=319e8c&label=docs.rs
 
-**Asynchronous runtime abstractions for implicit function decoloring.** Decolor is in https://github.com/refcell/decolor/labels/beta.
+**Asynchronous runtime abstractions for implicit function decoloring.** Decolor is in https://github.com/refcell/decolor/labels/beta
 
 ![](./etc/banner.png)
 
