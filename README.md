@@ -33,7 +33,7 @@
 `decolor` is a [procedural macro][proc-macro] crate that implements
 a `#[decolor]` [attribute macro][attribute-macro] used to *"decolor"*
 an asynchronous rust function. Concretely, the `#[decolor]` macro
-can be placed above an asynchronous function to safely <sup>1</sup> transform it
+can be placed above an asynchronous function to safely<sup>1</sup> transform it
 into a ["purple" function][purple] (a synchronous function that blocks
 on asynchronous functionality internally).
 
