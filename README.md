@@ -19,7 +19,7 @@
 
 **Asynchronous runtime abstractions for implicit function decoloring.** Decolor is in https://github.com/refcell/decolor/labels/beta
 
-![](./etc/banner.png)
+![](https://raw.githubusercontent.com/refcell/decolor/main/etc/banner.png)
 
 **[Install](#usage)**
 | [User Docs](#what-is-decolor)
