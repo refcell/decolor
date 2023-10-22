@@ -48,7 +48,7 @@ on asynchronous functionality internally).
 
 Add `decolor` as a dependency with cargo.
 
-```ignore,sh,no_run
+```bash,ignore
 cargo add decolor
 ```
 
