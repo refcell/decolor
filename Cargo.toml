@@ -1,13 +1,13 @@
 [package]
 name = "decolor"
 description = "Asynchronous runtime abstractions for implicit function decoloring."
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 license = "MIT"
 authors = ["refcell"]
 rust-version = "1.72"
 keywords = ["decolor", "async", "color", "macro", "library"]
-categories = ["library"]
+categories = ["asynchronous", "development-tools::procedural-macro-helpers"]
 homepage = "https://github.com/refcell/decolor"
 repository = "https://github.com/refcell/decolor"
 exclude = ["benches/", "tests/"]
