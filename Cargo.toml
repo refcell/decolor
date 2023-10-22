@@ -1,12 +1,12 @@
 [package]
 name = "decolor"
-description = "Dead simple, minimal SPDX License generator library written in Rust."
-version = "0.1.2"
+description = ""
+version = "0.0.1"
 edition = "2021"
 license = "MIT"
 authors = ["refcell"]
 rust-version = "1.72"
-keywords = ["decolor", "generator", "license", "spdx", "library"]
+keywords = ["decolor", "async", "color", "macro", "library"]
 categories = ["library"]
 homepage = "https://github.com/refcell/decolor"
 repository = "https://github.com/refcell/decolor"
@@ -14,5 +14,7 @@ exclude = ["benches/", "tests/"]
 
 [dependencies]
 anyhow = "1.0.75"
-reqwest = { version = "0.11.22", features = ["json"] }
 tokio = { version = "1.33.0", features = ["full"] }
+
+[dev-dependencies]
+reqwest = { version = "0.11.22", features = ["json"] }
