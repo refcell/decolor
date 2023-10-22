@@ -37,9 +37,18 @@ can be placed above an asynchronous function to safely <sup>1</sup> transform it
 into a ["purple" function][purple] (a synchronous function that blocks
 on asynchronous functionality internally).
 
+**1**: Constructing the `block_on()` call in this way prevents nested runtime
+panics, but calling the Handle [block_on][block-on] method itself [panics][handle-panics]
+if the provided future panics *or* if the runtime on which a timer future is called upon
+is shut down prior to completion. Additionally, the [Runtime][runtime]'s
+[`block_on`][runtime-block-on] call will [panic][runtime-panic] if it is called from within
+an asynchronous execution context.
 
-<sup>1</sup>: ...
-
+[runtime-panic]: https://docs.rs/tokio/latest/tokio/runtime/struct.Runtime.html#panics
+[runtime-block-on]: https://docs.rs/tokio/latest/tokio/runtime/struct.Runtime.html#method.block_on
+[runtime]: https://docs.rs/tokio/latest/tokio/runtime/struct.Runtime.html#
+[block-on]: https://docs.rs/tokio/latest/tokio/runtime/struct.Handle.html#method.block_on
+[handle-panics]: https://docs.rs/tokio/latest/tokio/runtime/struct.Handle.html#panics-2
 [purple]: https://morestina.net/blog/1686/rust-async-is-colored
 [attribute-macro]: https://doc.rust-lang.org/beta/reference/procedural-macros.html#attribute-macros
 [proc-macro]: https://doc.rust-lang.org/beta/reference/procedural-macros.html
