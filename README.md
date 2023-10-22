@@ -17,8 +17,7 @@
 [Docs-rs]: https://docs.rs/decolor/
 [Docs]: https://img.shields.io/docsrs/decolor.svg?color=319e8c&label=docs.rs
 
-
-**...** Decolor is in https://github.com/refcell/decolor/labels/beta.
+**Asynchronous runtime abstractions for implicit function decoloring.** Decolor is in https://github.com/refcell/decolor/labels/beta.
 
 ![](./etc/banner.png)
 
@@ -31,8 +30,19 @@
 
 ## What is decolor?
 
-`decolor` is a
+`decolor` is a [procedural macro][proc-macro] crate that implements
+a `#[decolor]` [attribute macro][attribute-macro] used to *"decolor"*
+an asynchronous rust function. Concretely, the `#[decolor]` macro
+can be placed above an asynchronous function to safely <sup>1</sup> transform it
+into a ["purple" function][purple] (a synchronous function that blocks
+on asynchronous functionality internally).
 
+
+<sup>1</sup>: ...
+
+[purple]: https://morestina.net/blog/1686/rust-async-is-colored
+[attribute-macro]: https://doc.rust-lang.org/beta/reference/procedural-macros.html#attribute-macros
+[proc-macro]: https://doc.rust-lang.org/beta/reference/procedural-macros.html
 
 ## Usage
 
@@ -46,12 +56,18 @@ A short example for building a purple function using the
 [decolor][decolor] decorator.
 
 ```rust
-use anyhow::Result;
+use decolor::decolor;
+use tokio::time::{sleep, Duration};
 
-#[tokio::main]
-async fn main() -> Result<()> {
-    println!("no implemented!");
-    Ok(())    
+#[decolor]
+async fn foo() -> anyhow::Result<()> {
+    sleep(Duration::from_secs(1)).await;
+    println!("Hello, world!");
+    Ok(())
+}
+
+fn main() {
+    assert!(foo().is_ok());
 }
 ```
 

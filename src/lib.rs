@@ -8,35 +8,63 @@
 #![deny(unused_must_use, rust_2018_idioms)]
 #![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg))]
 
-use anyhow::Result;
+use proc_macro::TokenStream;
+use quote::quote;
+use syn::{parse_macro_input, ItemFn};
 
-/// Purple function demonstratings a blue function
-/// that internally hides a blocking call to a red
-/// function using a runtime like tokio.
-pub fn purple() -> Result<()> {
-    let rt = tokio::runtime::Runtime::new().unwrap();
-    rt.block_on(async {
-        // Perform an async file read call
-        println!("Inside purple blocking call...");
-    });
-    Ok(())
-}
+/// Procedural macro that accepts an async function
+/// and turns it into a blocking function by wrapping
+/// the internals with a blocking call.
+///
+/// Under the hood, this works by calling attempting
+/// to build a tokio [runtime](tokio::runtime::Runtime)
+/// and then calling [`block_on(...)`] on the returned
+/// runtime. If the runtime construction fails, for example
+/// because the runtime is being nested, then [`decolor`]
+/// will fallback to using the current [Handle](tokio::runtime::Handle)
+/// and then calling [`block_on()`](tokio::runtime::Handle::block_on())
+/// on the returned handle.
+///
+/// # Example
+/// ```
+/// use tokio::time::{sleep, Duration};
+/// use decolor::decolor;
+///
+/// #[decolor]
+/// async fn foo() {
+///    sleep(Duration::from_secs(1)).await;
+///    println!("Hello, world!");
+/// }
+///
+/// fn main() {
+///    foo();
+/// }
+/// ```
+#[proc_macro_attribute]
+pub fn decolor(_attr: TokenStream, input: TokenStream) -> TokenStream {
+    // Parse the input as an async function
+    let input = parse_macro_input!(input as ItemFn);
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+    // Extract the function body
+    let orig_function_body = input.block;
 
-    #[tokio::test]
-    async fn test_call_purple_inside_runtime() {
-        let result = std::panic::catch_unwind(|| {
-            let rt = tokio::runtime::Runtime::new().unwrap();
-            rt.block_on(async {
-                // This function call will panic because internally
-                // it tries to construct a tokio runtime, which would
-                // create a nested runtime (not allowed).
-                let _ = purple();
-            });
-        });
-        assert!(result.is_err());
-    }
+    // Extract the function name and return type.
+    // Then generate a new synchronous function
+    // with the same name and return type.
+    let fn_name = &input.sig.ident;
+    let orig_return_type = &input.sig.output;
+    let expanded = quote! {
+        fn #fn_name() #orig_return_type {
+            match tokio::runtime::Runtime::new() {
+                Ok(rt) => rt.block_on(async move {
+                    #orig_function_body
+                }),
+                Err(_) => tokio::runtime::Handle::current().block_on(async move {
+                    #orig_function_body
+                }),
+            }
+        }
+    };
+
+    expanded.into()
 }
